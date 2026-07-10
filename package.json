@@ -46,7 +46,7 @@
     "typescript": "^5.4.5"
   },
   "scripts": {
-    "build:all": "NODE_OPTIONS='--max-old-space-size=4096' yarn turbo run prepublish",
+    "build:all": "cross-env NODE_OPTIONS=--max-old-space-size=4096 yarn turbo run prepublish",
     "references:update": "yarn workspaces-to-typescript-project-references",
     "test": "yarn turbo run test --concurrency=1 --continue",
     "test:watch": "yarn turbo run test:watch",

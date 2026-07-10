@@ -8,8 +8,19 @@ export type SyncData = {
   [SyncDataKey.settings]: Settings;
 };
 
+export type LLMSettings = {
+  // OpenAI-compatible endpoint, e.g. https://api.openai.com/v1/chat/completions
+  endpoint: string;
+  // API key for the LLM service
+  apiKey: string;
+  // Model name, e.g. gpt-4o-mini
+  model: string;
+  // Whether to enable LLM-based summarization
+  enabled: boolean;
+};
+
 export type Settings = {
-  //
+  llm?: LLMSettings;
 };
 
 export enum LocalDataKey {

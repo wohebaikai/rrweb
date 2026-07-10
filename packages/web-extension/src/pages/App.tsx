@@ -3,6 +3,7 @@ import SidebarWithHeader from '~/components/SidebarWithHeader';
 import { SessionList } from './SessionList';
 import { FiList, FiSettings } from 'react-icons/fi';
 import Player from './Player';
+import Summary from './Summary';
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<SessionList />} />
         <Route path="session/:sessionId" element={<Player />} />
+        <Route path="summary/:sessionId" element={<Summary />} />
       </Routes>
     </SidebarWithHeader>
   );

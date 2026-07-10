@@ -11,8 +11,8 @@
     "dev:firefox": "cross-env TARGET_BROWSER=firefox vite dev",
     "build:chrome": "cross-env TARGET_BROWSER=chrome vite build",
     "build:firefox": "cross-env TARGET_BROWSER=firefox vite build",
-    "pack:chrome": "cross-env TARGET_BROWSER=chrome ZIP=true vite build",
-    "pack:firefox": "cross-env TARGET_BROWSER=firefox ZIP=true vite build",
+    "pack:chrome": "cross-env TARGET_BROWSER=chrome ZIP=false vite build",
+    "pack:firefox": "cross-env TARGET_BROWSER=firefox ZIP=false vite build",
     "check-types": "tsc -noEmit",
     "build": "npm run pack:chrome && npm run pack:firefox",
     "prepublish": "yarn build"

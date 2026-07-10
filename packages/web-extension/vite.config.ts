@@ -111,10 +111,14 @@ export default defineConfig({
         return manifest;
       },
       browser: process.env.TARGET_BROWSER,
-      webExtConfig: {
-        startUrl: ['github.com/rrweb-io/rrweb'],
-        watchIgnored: ['*.md', '*.log'],
-      },
+      // Skip manifest validation: the plugin downloads a JSON schema from
+      // raw.githubusercontent.com which can fail with ETIMEDOUT on networks
+      // where GitHub raw content is unreachable.
+      skipManifestValidation: true,
+      // webExtConfig: {
+      //   startUrl: ['github.com/rrweb-io/rrweb'],
+      //   watchIgnored: ['*.md', '*.log'],
+      // },
       additionalInputs: ['pages/index.html', 'content/inject.ts'],
     }) as PluginOption,
     // https://github.com/aklinker1/vite-plugin-web-extension/issues/50#issuecomment-1317922947
