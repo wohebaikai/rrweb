@@ -63,8 +63,7 @@ function walkSnapshot(
     node.tagName.toLowerCase() === 'label'
   ) {
     const attrs = node.attributes;
-    const forAttr =
-      (attrs.for as string) || (attrs.htmlFor as string) || '';
+    const forAttr = (attrs.for as string) || (attrs.htmlFor as string) || '';
     if (forAttr) ctx.labelForMap.set(forAttr, node.id);
   }
   const childNodes =
@@ -105,7 +104,10 @@ function applyMutationToMirror(
     const pid = ctx.parentMap.get(remove.id);
     if (pid !== undefined) {
       const parent = ctx.mirror.get(pid);
-      if (parent && (parent.type === NodeType.Element || parent.type === NodeType.Document)) {
+      if (
+        parent &&
+        (parent.type === NodeType.Element || parent.type === NodeType.Document)
+      ) {
         parent.childNodes = parent.childNodes.filter((c) => c.id !== remove.id);
       }
     }
@@ -117,7 +119,10 @@ function applyMutationToMirror(
     // and getNodeText cannot see mutation-added elements (e.g. a dialog that
     // opens after the full snapshot). Patch the parent's childNodes here.
     const parent = ctx.mirror.get(add.parentId);
-    if (parent && (parent.type === NodeType.Element || parent.type === NodeType.Document)) {
+    if (
+      parent &&
+      (parent.type === NodeType.Element || parent.type === NodeType.Document)
+    ) {
       if (!parent.childNodes.some((c) => c.id === add.node.id)) {
         parent.childNodes.push(add.node);
       }
@@ -162,10 +167,7 @@ function getNodeText(node: serializedNodeWithId): string {
  * `<button><span>编辑</span></button>` where the button itself has no direct
  * text child.
  */
-function getRecursiveText(
-  node: serializedNodeWithId,
-  maxDepth = 6,
-): string {
+function getRecursiveText(node: serializedNodeWithId, maxDepth = 6): string {
   if (maxDepth <= 0) return '';
   if (node.type === NodeType.Text) return node.textContent;
   if (node.type === NodeType.Element) {
@@ -260,11 +262,7 @@ function findDescendantInputLabel(
     const cur = item.node;
     if (cur.type !== NodeType.Element) continue;
     const curTag = cur.tagName.toLowerCase();
-    if (
-      curTag === 'input' ||
-      curTag === 'select' ||
-      curTag === 'textarea'
-    ) {
+    if (curTag === 'input' || curTag === 'select' || curTag === 'textarea') {
       const attrs = cur.attributes ?? {};
       const idAttr = (attrs.id as string) || undefined;
       if (idAttr) {
@@ -272,10 +270,7 @@ function findDescendantInputLabel(
         if (labelNodeId !== undefined) {
           const labelNode = ctx.mirror.get(labelNodeId);
           if (labelNode) {
-            const labelText = truncate(
-              getRecursiveText(labelNode, 3),
-              40,
-            );
+            const labelText = truncate(getRecursiveText(labelNode, 3), 40);
             if (isUsefulName(labelText)) return labelText;
           }
         }
@@ -448,9 +443,7 @@ function describeElement(
     id: (attrs.id as string) || undefined,
     name: (attrs.name as string) || undefined,
     className:
-      typeof attrs.class === 'string' && attrs.class
-        ? attrs.class
-        : undefined,
+      typeof attrs.class === 'string' && attrs.class ? attrs.class : undefined,
     testId: isUsefulName(rawTestId) ? rawTestId : undefined,
   };
 
@@ -482,7 +475,8 @@ function describeElement(
       const curEl = cur;
       if (curEl.tagName.toLowerCase() === 'label') {
         const labelText = truncate(getRecursiveText(curEl, 4), 40);
-        if (isUsefulName(labelText)) return { ...info, ancestorLabel: labelText };
+        if (isUsefulName(labelText))
+          return { ...info, ancestorLabel: labelText };
         break;
       }
     }
@@ -638,10 +632,7 @@ const TAG_CHINESE: Record<string, string> = {
  * attributes into account for `<input>` elements (e.g.
  * `<input type="radio">` → "单选框", `<input role="switch">` → "开关").
  */
-function getTagLabel(
-  tag: string,
-  node?: serializedNodeWithId,
-): string {
+function getTagLabel(tag: string, node?: serializedNodeWithId): string {
   if (tag === 'input' && node && node.type === NodeType.Element) {
     const attrs = node.attributes ?? {};
     const type = (attrs.type as string) || '';
@@ -771,7 +762,8 @@ function describeInput(
   ctx: ElementContext,
 ): string {
   const label = labelElement(node, ctx);
-  const tag = node && node.type === NodeType.Element ? node.tagName.toLowerCase() : '';
+  const tag =
+    node && node.type === NodeType.Element ? node.tagName.toLowerCase() : '';
   if (tag === 'input' || tag === 'checkbox' || tag === 'radio') {
     const type =
       node && node.type === NodeType.Element
@@ -983,10 +975,7 @@ export function extractOperationSteps(
               offset,
               time: formatTime(offset),
               timestamp: event.timestamp,
-              description: describeViewportResize(
-                data.width,
-                data.height,
-              ),
+              description: describeViewportResize(data.width, data.height),
               context: {
                 kind: 'viewport-resize',
                 width: data.width,
@@ -1115,9 +1104,7 @@ async function callLLM(
 
 export const STEP_BATCH_SIZE = 40;
 
-function buildStepRefinementMessages(
-  batch: OperationStep[],
-): ChatMessage[] {
+function buildStepRefinementMessages(batch: OperationStep[]): ChatMessage[] {
   const system =
     '你是一个网页操作录制分析助手。给定一组结构化的用户操作步骤（JSON 数组），' +
     '请为每个步骤生成简洁、自然的中文描述，说明用户做了什么。\n' +
@@ -1226,10 +1213,9 @@ function parseStepRefinementResponse(
     }>;
   } catch (e) {
     throw new Error(
-      `LLM 返回的 JSON 解析失败: ${(e as Error).message}。原始内容（前 500 字）: ${content.slice(
-        0,
-        500,
-      )}`,
+      `LLM 返回的 JSON 解析失败: ${
+        (e as Error).message
+      }。原始内容（前 500 字）: ${content.slice(0, 500)}`,
     );
   }
   return parsed.map((item) => ({
@@ -1357,10 +1343,7 @@ export async function summarizeRecording(
     return { steps: snapshot(), llmUsed: false };
   }
 
-  const totalBatches = Math.max(
-    1,
-    Math.ceil(steps.length / STEP_BATCH_SIZE),
-  );
+  const totalBatches = Math.max(1, Math.ceil(steps.length / STEP_BATCH_SIZE));
   let completedBatches = 0;
   let refinedSteps = 0;
 
@@ -1450,14 +1433,10 @@ export async function summarizeRecording(
     let overallSummary: string | undefined;
     try {
       overallSummary = (
-        await callLLM(
-          llm,
-          buildOverallSummaryMessages(current),
-          {
-            temperature: 0.4,
-            ...(signal ? { signal } : {}),
-          },
-        )
+        await callLLM(llm, buildOverallSummaryMessages(current), {
+          temperature: 0.4,
+          ...(signal ? { signal } : {}),
+        })
       ).trim();
     } catch {
       // The overall summary is best-effort; ignore failures here.
